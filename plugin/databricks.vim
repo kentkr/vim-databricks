@@ -2,8 +2,11 @@
 " Description:  A plugin to send py and sql commands directly to databricks
 " Maintainer:   kentkr
 
-if exists('g:loaded_databricks') 
-  finish
+if !exists('g:loaded_databricks') 
+    let g:loaded_databricks = 1
+    " autoload
+    if !exists('*databricks#OpenNewBuffer')    
+        runtime autoload/databricks/functions.vim
+    endif
 endif
-let g:loaded_databricks = 1
 
