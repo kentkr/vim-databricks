@@ -6,7 +6,7 @@ if !exists('g:loaded_databricks')
     let g:loaded_databricks = 1
     " autoload
     if !exists('*databricks#OpenNewBuffer')    
-        runtime autoload/databricks/functions.vim
+        runtime autoload/databricks/databricks.vim
     endif
 endif
 
