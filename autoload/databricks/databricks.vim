@@ -31,8 +31,12 @@ function! databricks#run_python(python_code)
     let python_code_escaped = substitute(a:python_code, "'", "\\'", "g")
     let python_code_escaped = substitute(python_code_escaped, "\\", "\\\\", "g")
 
+    " Get script path
+    let plugin_path = fnamemodify(resolve(expand('<sfile>:p:h:h')), ':p')
+    let script_path = plugin_path . 'vim-databricks/autoload/databricks/python_sdk.py'
+        
     " Construct the command to run Python
-    let command = 'python3 -c "' . python_code_escaped . '"'
+    let command = 'python3 ' . shellescape(script_path) . ' --code ' . ' "' . python_code_escaped . '"'
 
     " Execute the Python code using system()
     let output = system(command)
@@ -67,16 +71,6 @@ function! databricks#main(cmd)
     call databricks#display_result(output)
 endfunction
 
-function! databricks#send_to_main() range
-  let selected_text = @"
-  " Replace special characters for proper shell command handling if needed
-  let sanitized_text = shellescape(selected_text)
-  echo sanitized_text
-
-  " Call the function with the selected text as cmd argument
-  call databricks#main(selected_text)
-endfunction
-
 function! databricks#get_visual_selection()
     " Why is this not a built-in Vim script function?!
     let [line_start, column_start] = getpos("'<")[1:2]
@@ -94,16 +88,7 @@ function! databricks#get_buffer_text()
     " Get all lines into a list
     let buffer_text = getline(1, '$')
 
-    " Print or process the buffer text (example: print line by line)
-    "for line in buffer_text
-    "    echo line
-    "endfor
-
     " Return the buffer text
     return join(buffer_text, "\n")
 endfunction
 
-" normal mode get all text
-"nnoremap <leader>sp :call databricks#main(databricks#get_buffer_text())<CR>
-" visual mode get selection - visual lines, does not work with block text
-"vnoremap <leader>sp :<C-u>call databricks#main(databricks#get_visual_selection())<CR>
