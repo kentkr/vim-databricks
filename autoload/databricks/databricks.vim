@@ -8,8 +8,9 @@ function! databricks#open_buffer()
 
     " Create a new empty buffer and set its height
     execute "botright " . buf_height . "new"
-    " make it nonmodifiable
-    setlocal readonly nomodifiable
+    " make modifiable to overwrite buf
+    call setbufvar('%', '&modifiable', 0)
+    call setbufvar('%', '&readonly', 1)
 
     " return the new buffer number
     return bufnr('%')
@@ -46,11 +47,16 @@ function! databricks#run_python(python_code)
 endfunction
 
 function! databricks#display_result(result)
+    " make modifiable to overwrite buf
+    call setbufvar(g:buf_num, '&modifiable', 1)
+    call setbufvar(g:buf_num, '&readonly', 0)
     " clear buffer
     call deletebufline(g:buf_num, 1, '$')
-
     " show result in buf
     call setbufline(g:buf_num, 1, split(a:result, '\n'))
+    " make not modifiable again
+    call setbufvar(g:buf_num, '&modifiable', 0)
+    call setbufvar(g:buf_num, '&readonly', 1)
 endfunction
 
 function! databricks#main(cmd)
