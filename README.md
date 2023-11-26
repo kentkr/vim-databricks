@@ -2,7 +2,7 @@
 vim-databricks is a vim plugin that allows you to develop code locally then easily 
 send it to your databricks cluster/sql warehouse.
 
-> **Note** 
+> [!NOTE]
 > This plugin is still under construction. All it can do now is open a buffer and
 > print python code within it.
 
