@@ -3,7 +3,19 @@ import argparse
 from databricks.sdk import WorkspaceClient
 from databricks.sdk.service import compute
 
-def execute_code(cmd, profile, cluster_id) -> str:
+def execute_code(cmd: str, profile: str, cluster_id: str) -> str:
+    """
+    Send python code to execute on databricks. It currenly creates a new execution
+    context for each run. 
+
+    Parameters:
+        cmd (str): Python code to execute
+        profile: Databricks profile set up in ~/.databrickscfg
+        cluster_id: the cluster id for code to be executed on
+
+    Returns:
+        str: command output
+    """
     client = WorkspaceClient(profile=profile)
     #cluster_id = '0420-160411-p8oi50n1'
     context = client.command_execution.create(cluster_id=cluster_id, language=compute.Language.python).result()
@@ -16,6 +28,9 @@ def execute_code(cmd, profile, cluster_id) -> str:
     return response.results.data
 
 def main() -> None:
+    """
+    When script is ran read in args and execute code
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument('--code')
     parser.add_argument('--profile')
