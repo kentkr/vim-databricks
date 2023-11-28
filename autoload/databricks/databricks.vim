@@ -1,3 +1,4 @@
+" path of script up to autoload/
 let s:plugin_path = fnamemodify(resolve(expand('<sfile>:p:h:h')), ':p')
 
 function! databricks#open_buffer()
@@ -34,7 +35,6 @@ function! databricks#run_python(python_code)
     let python_code_escaped = substitute(python_code_escaped, "\\", "\\\\", "g")
 
     " Get script path
-    "let script_path = s:plugin_path . 'vim-databricks/autoload/databricks/python_sdk.py'
     let script_path = s:plugin_path . 'databricks/python_sdk.py'
         
     " Construct the command to run Python
@@ -97,11 +97,4 @@ function! databricks#get_buffer_text()
 
     " Return the buffer text
     return join(buffer_text, "\n")
-endfunction
-
-function! databricks#test()
-    echo expand('<sfile>:p:h:h')
-    echo resolve(expand('<sfile>:p:h:h'))
-    echo fnamemodify(resolve(expand('<sfile>:p:h:h')), ':p')
-    echo s:plugin_path
 endfunction
