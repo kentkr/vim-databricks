@@ -1,3 +1,5 @@
+" path of script up to autoload/
+let s:plugin_path = fnamemodify(resolve(expand('<sfile>:p:h:h')), ':p')
 
 function! databricks#open_buffer()
     " Calculate the height for the new buffer
@@ -8,9 +10,9 @@ function! databricks#open_buffer()
 
     " Create a new empty buffer and set its height
     execute "botright " . buf_height . "new"
-    " make modifiable to overwrite buf
-    call setbufvar('%', '&modifiable', 0)
-    call setbufvar('%', '&readonly', 1)
+
+    " not a file so it cant be written
+    call setbufvar('%', '&buftype', 'nofile')
 
     " return the new buffer number
     return bufnr('%')
@@ -33,11 +35,10 @@ function! databricks#run_python(python_code)
     let python_code_escaped = substitute(python_code_escaped, "\\", "\\\\", "g")
 
     " Get script path
-    let plugin_path = fnamemodify(resolve(expand('<sfile>:p:h:h')), ':p')
-    let script_path = plugin_path . 'vim-databricks/autoload/databricks/python_sdk.py'
+    let script_path = s:plugin_path . 'databricks/python_sdk.py'
         
     " Construct the command to run Python
-    let command = 'python3 ' . shellescape(script_path) . ' --code ' . ' "' . python_code_escaped . '"'
+    let command = 'python3 ' . shellescape(script_path) . ' --code ' . ' "' . python_code_escaped . '"' . ' --profile ' . g:databricks_profile . ' --cluster_id ' . g:databricks_cluster_id
 
     " Execute the Python code using system()
     let output = system(command)
@@ -49,14 +50,14 @@ endfunction
 function! databricks#display_result(result)
     " make modifiable to overwrite buf
     call setbufvar(g:buf_num, '&modifiable', 1)
-    call setbufvar(g:buf_num, '&readonly', 0)
+
     " clear buffer
     call deletebufline(g:buf_num, 1, '$')
     " show result in buf
     call setbufline(g:buf_num, 1, split(a:result, '\n'))
+
     " make not modifiable again
     call setbufvar(g:buf_num, '&modifiable', 0)
-    call setbufvar(g:buf_num, '&readonly', 1)
 endfunction
 
 function! databricks#main(cmd)
@@ -97,4 +98,3 @@ function! databricks#get_buffer_text()
     " Return the buffer text
     return join(buffer_text, "\n")
 endfunction
-
