@@ -98,3 +98,8 @@ function! databricks#get_buffer_text()
     return join(buffer_text, "\n")
 endfunction
 
+function! databricks#test()
+    echo expand('<sfile>:p:h:h')
+    echo resolve(expand('<sfile>:p:h:h'))
+    echo fnamemodify(resolve(expand('<sfile>:p:h:h')), ':p')
+endfunction
