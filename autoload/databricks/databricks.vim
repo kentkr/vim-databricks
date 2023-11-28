@@ -1,3 +1,4 @@
+let s:plugindir = expand('<sfile>:p:h:h')
 
 function! databricks#open_buffer()
     " Calculate the height for the new buffer
@@ -102,4 +103,5 @@ function! databricks#test()
     echo expand('<sfile>:p:h:h')
     echo resolve(expand('<sfile>:p:h:h'))
     echo fnamemodify(resolve(expand('<sfile>:p:h:h')), ':p')
+    echo s:plugindir
 endfunction
