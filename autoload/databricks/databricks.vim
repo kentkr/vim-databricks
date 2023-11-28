@@ -1,4 +1,4 @@
-let s:plugindir = expand('<sfile>:p:h:h')
+let s:plugin_path = fnamemodify(resolve(expand('<sfile>:p:h:h')), ':p')
 
 function! databricks#open_buffer()
     " Calculate the height for the new buffer
@@ -34,8 +34,8 @@ function! databricks#run_python(python_code)
     let python_code_escaped = substitute(python_code_escaped, "\\", "\\\\", "g")
 
     " Get script path
-    let plugin_path = fnamemodify(resolve(expand('<sfile>:p:h:h')), ':p')
-    let script_path = plugin_path . 'vim-databricks/autoload/databricks/python_sdk.py'
+    "let script_path = s:plugin_path . 'vim-databricks/autoload/databricks/python_sdk.py'
+    let script_path = s:plugin_path . 'databricks/python_sdk.py'
         
     " Construct the command to run Python
     let command = 'python3 ' . shellescape(script_path) . ' --code ' . ' "' . python_code_escaped . '"' . ' --profile ' . g:databricks_profile . ' --cluster_id ' . g:databricks_cluster_id
@@ -103,5 +103,5 @@ function! databricks#test()
     echo expand('<sfile>:p:h:h')
     echo resolve(expand('<sfile>:p:h:h'))
     echo fnamemodify(resolve(expand('<sfile>:p:h:h')), ':p')
-    echo s:plugindir
+    echo s:plugin_path
 endfunction
