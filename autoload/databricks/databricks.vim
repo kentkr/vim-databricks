@@ -36,8 +36,10 @@ function! databricks#run_python(python_code)
     let plugin_path = fnamemodify(resolve(expand('<sfile>:p:h:h')), ':p')
     let script_path = plugin_path . 'vim-databricks/autoload/databricks/python_sdk.py'
         
+    let g:databricks_profile = 'dev'
+    let g:databricks_cluster_id = '0420-160411-p8oi50n1'
     " Construct the command to run Python
-    let command = 'python3 ' . shellescape(script_path) . ' --code ' . ' "' . python_code_escaped . '"'
+    let command = 'python3 ' . shellescape(script_path) . ' --code ' . ' "' . python_code_escaped . '"' . ' --profile ' . g:databricks_profile . ' --cluster_id ' . g:databricks_cluster_id
 
     " Execute the Python code using system()
     let output = system(command)
