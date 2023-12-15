@@ -72,7 +72,10 @@ def execute_code(cmd: str, profile: str, cluster_id: str) -> str:
                                                 language=compute.Language.python,
                                                 command=cmd).result()
 
-    return response.results.data
+    if response.results.cause:
+        return response.results.cause
+    else:
+        return response.results.data
 
 def main() -> None:
     """
