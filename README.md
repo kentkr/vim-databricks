@@ -57,8 +57,6 @@ vnoremap <leader>sp :<C-u>call databricks#main(databricks#get_visual_selection()
 
 # Usage
 
-Currently everytime code is ran a new "execution context" is created then deleted. That means
-variables ran previously disappear. Therefore the best way to use vim-databricks, at the moment,
-is to run whole scripts. 
-
-Managing execution contexts will be the next released feature.
+Open a py script and execute <leader>sp on your keyboard. It will run any py command on the specified `g:databricks_cluster_id`.
+Every command and variable will be remembered through the execution context. To clear it and and reset the context run
+`:call databricks#clear_execution_context()`
