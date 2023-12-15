@@ -29,6 +29,11 @@ function! databricks#reopen_buffer(buf_num)
     execute "botright sb " . a:buf_num . " | resize " . buf_height
 endfunction
 
+function! databricks#clear_execution_context()
+    let l:file_path = s:plugin_path . 'databricks/.execution_context'
+    call delete(l:file_path)
+endfunction
+
 function! databricks#run_python(python_code)
     " Escape single quotes in the Python code
     let python_code_escaped = substitute(a:python_code, "'", "\\'", "g")
