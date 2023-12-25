@@ -1,5 +1,8 @@
 # venv
 venv/*
+<<<<<<< HEAD
 
 # pytests
 **__pycache__**
+*tmp*
+.execution_context

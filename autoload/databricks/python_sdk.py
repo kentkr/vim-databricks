@@ -2,6 +2,55 @@
 import argparse
 from databricks.sdk import WorkspaceClient
 from databricks.sdk.service import compute
+import os
+from datetime import datetime
+
+def context_is_running(profile: str, cluster_id: str, context_id: str) -> bool:
+    """
+    Check if a context is running.
+
+    Parameters:
+        profile: str
+        cluster_id: str
+        context_id: str
+
+    Returns: 
+        bool
+    """
+    client = WorkspaceClient(profile=profile)
+    try:
+        res = client.command_execution.context_status(cluster_id, context_id)
+        return res.status.value == 'Running'
+    except Exception:
+        return False
+
+def get_execution_context(profile: str, cluster_id: str) -> str:
+    """
+    Get a new or old execution context. It starts to reading looking for a file at __file__/.execution_context . If one is
+    found it will check it is still running. Else it will create a new one.
+
+    Parameters:
+        profile: str
+        cluster_id: str
+
+    Returns: 
+        bool
+    
+    """
+    path = os.path.join(os.path.dirname(__file__), '.execution_context')
+    if os.path.exists(path):
+        with open(path, 'r') as f:
+            file = f.readlines()
+            id, last_time = file[-1].split(',')
+        if context_is_running(profile, cluster_id, id):
+            return id
+
+    cur_time = datetime.now()
+    client = WorkspaceClient(profile=profile)
+    new_context = client.command_execution.create(cluster_id=cluster_id, language=compute.Language.python).result()
+    with open(path, 'w') as f:
+        f.write(f'{new_context.id},{cur_time}')
+    return new_context.id
 
 def execute_code(cmd: str, profile: str, cluster_id: str) -> str:
     """
@@ -17,15 +66,16 @@ def execute_code(cmd: str, profile: str, cluster_id: str) -> str:
         str: command output
     """
     client = WorkspaceClient(profile=profile)
-    #cluster_id = '0420-160411-p8oi50n1'
-    context = client.command_execution.create(cluster_id=cluster_id, language=compute.Language.python).result()
+    context_id = get_execution_context(profile, cluster_id)
     response = client.command_execution.execute(cluster_id=cluster_id,
-                                                context_id=context.id,
+                                                context_id=context_id,
                                                 language=compute.Language.python,
                                                 command=cmd).result()
-    client.command_execution.destroy(cluster_id=cluster_id, context_id=context.id)
 
-    return response.results.data
+    if response.results.cause:
+        return response.results.cause
+    else:
+        return response.results.data
 
 def main() -> None:
     """
@@ -37,7 +87,9 @@ def main() -> None:
     parser.add_argument('--cluster_id')
     args = parser.parse_args()
 
+    #print(get_execution_context(args.profile, args.cluster_id))
     print(execute_code(args.code, args.profile, args.cluster_id))
 
 if __name__ == "__main__":
     main()
+
