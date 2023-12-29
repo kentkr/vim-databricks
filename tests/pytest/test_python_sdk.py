@@ -8,17 +8,14 @@ from unittest.mock import MagicMock
 from autoload.databricks.python_sdk import context_is_running
 import pytest
 
-@pytest.fixture(scope='class')
-def mock_client(monkeypatch):
-    mock_client=MagicMock()
-    monkeypatch.setattr('autoload.databricks.python_sdk.WorkspaceClient', mock_client)
-    yield mock_client
 
-# context_is_running
 class TestContext:
-    @classmethod
-    def setup_class(cls, mock_client):
-        cls.mock_client = mock_client 
+    @pytest.fixture(autouse=True)
+    def mock_client(self, monkeypatch):
+        mock_client=MagicMock()
+        monkeypatch.setattr('autoload.databricks.python_sdk.WorkspaceClient', mock_client)
+        self.mock_client=mock_client
+        yield mock_client
 
     def update_context_status_value(self, value):
         self.mock_client().command_execution.context_status().status.value=value
