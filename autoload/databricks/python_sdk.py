@@ -87,7 +87,6 @@ def main() -> None:
     parser.add_argument('--cluster_id')
     args = parser.parse_args()
 
-    #print(get_execution_context(args.profile, args.cluster_id))
     print(execute_code(args.code, args.profile, args.cluster_id))
 
 if __name__ == "__main__":
