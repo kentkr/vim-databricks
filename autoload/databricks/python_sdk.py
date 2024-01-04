@@ -39,15 +39,20 @@ def get_execution_context(profile: str, cluster_id: str) -> str:
     """
     path = os.path.join(os.path.dirname(__file__), '.execution_context')
     if os.path.exists(path):
+        print('++++ HERE ++++')
         with open(path, 'r') as f:
             file = f.readlines()
             id, last_time = file[-1].split(',')
+            print('++++ AND HERE ++++')
+            print(path)
         if context_is_running(profile, cluster_id, id):
+            print('++++ yaaaa yEET ++++')
             return id
 
     cur_time = datetime.now()
     client = WorkspaceClient(profile=profile)
     new_context = client.command_execution.create(cluster_id=cluster_id, language=compute.Language.python).result()
+    print(new_context.id)
     with open(path, 'w') as f:
         f.write(f'{new_context.id},{cur_time}')
     return new_context.id

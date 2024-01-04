@@ -35,15 +35,11 @@ function! databricks#clear_execution_context()
 endfunction
 
 function! databricks#run_python(python_code)
-    " Escape single quotes in the Python code
-    let python_code_escaped = substitute(a:python_code, "'", "\\'", "g")
-    let python_code_escaped = substitute(python_code_escaped, "\\", "\\\\", "g")
-
     " Get script path
     let script_path = s:plugin_path . 'databricks/python_sdk.py'
         
     " Construct the command to run Python
-    let command = 'python3 ' . shellescape(script_path) . ' --code ' . ' "' . python_code_escaped . '"' . ' --profile ' . g:databricks_profile . ' --cluster_id ' . g:databricks_cluster_id
+    let command = 'python3 ' . shellescape(script_path) . ' --code ' . ' "' . shellescape(a:python_code) . '"' . ' --profile ' . g:databricks_profile . ' --cluster_id ' . g:databricks_cluster_id
 
     " Execute the Python code using system()
     let output = system(command)
