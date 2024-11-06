@@ -47,7 +47,7 @@ def get_execution_context(profile: str, cluster_id: str) -> str:
 
     cur_time = datetime.now()
     client = WorkspaceClient(profile=profile)
-    new_context = client.command_execution.create(cluster_id=cluster_id, language=compute.Language.python).result()
+    new_context = client.command_execution.create(cluster_id=cluster_id, language=compute.Language.PYTHON).result()
     with open(path, 'w') as f:
         f.write(f'{new_context.id},{cur_time}')
     return new_context.id
@@ -69,7 +69,7 @@ def execute_code(cmd: str, profile: str, cluster_id: str) -> str:
     context_id = get_execution_context(profile, cluster_id)
     response = client.command_execution.execute(cluster_id=cluster_id,
                                                 context_id=context_id,
-                                                language=compute.Language.python,
+                                                language=compute.Language.PYTHON,
                                                 command=cmd).result()
 
     if response.results.cause:
